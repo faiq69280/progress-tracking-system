@@ -2,6 +2,7 @@ package com.creativeuncommons.ProgressTrackingSystem.config;
 
 import com.creativeuncommons.ProgressTrackingSystem.datasource.QueryExecutionManager;
 import com.creativeuncommons.ProgressTrackingSystem.query.LinkUserRolesQueryProvider;
+import com.creativeuncommons.ProgressTrackingSystem.query.RoleQueryProvider;
 import com.creativeuncommons.ProgressTrackingSystem.query.UserQueries;
 import com.creativeuncommons.ProgressTrackingSystem.security.CustomPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,28 +48,19 @@ public class Beans {
     public UserQueries userQueryProvider() {
         return new UserQueries();
     }
-/*
-    @Bean
-    @Qualifier("postgresConnection")
-    public Connection postgresConnection(@Value("${spring.datasource.url}") String url,
-                                         @Value("${spring.datasource.username}") String username,
-                                         @Value("${spring.datasource.password}") String password) throws SQLException {
-        return DriverManager.getConnection(url,username,password);
-    }
- */
 
     @Bean
     DriverManagerDataSource dataSource(@Value("${spring.datasource.url}") String url,
                                        @Value("${spring.datasource.username}") String username,
                                        @Value("${spring.datasource.password}") String password,
-                                       @Value("${spring.datasource.driver-class-name}") String driverName){
+                                       @Value("${spring.datasource.driver-class-name}") String driverName) {
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
         driverManagerDataSource.setUrl(url);
         driverManagerDataSource.setUsername(username);
         driverManagerDataSource.setPassword(password);
         driverManagerDataSource.setDriverClassName(driverName);
         Properties properties = new Properties();
-        properties.put("autoCommit",false);
+        properties.put("autoCommit", false);
         driverManagerDataSource.setConnectionProperties(properties);
         return driverManagerDataSource;
     }
@@ -80,7 +72,7 @@ public class Beans {
     }
 
     @Bean
-    public QueryExecutionManager queryExecutionManager(@Autowired NamedParameterJdbcTemplate jdbcTemplate){
+    public QueryExecutionManager queryExecutionManager(@Autowired NamedParameterJdbcTemplate jdbcTemplate) {
         return new QueryExecutionManager(jdbcTemplate);
     }
 
@@ -91,8 +83,13 @@ public class Beans {
     }
 
     @Bean
-    public LinkUserRolesQueryProvider linkUserRolesQueryProvider(){
+    public LinkUserRolesQueryProvider linkUserRolesQueryProvider() {
         return new LinkUserRolesQueryProvider();
+    }
+
+    @Bean
+    public RoleQueryProvider roleQueryProvider() {
+        return new RoleQueryProvider();
     }
 
 }

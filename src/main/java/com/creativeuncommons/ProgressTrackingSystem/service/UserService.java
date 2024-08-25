@@ -16,6 +16,7 @@ import com.creativeuncommons.ProgressTrackingSystem.model.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,11 +29,18 @@ public class UserService implements UserDetailsService {
     @Qualifier("customPasswordEncoder")
     CustomPasswordEncoder passwordEncoder;
 
+
+
     public User register(User user) throws SaveFailureException, SQLException {
 
         if(userRepository.findByName(user.getUserName()).isPresent())
             throw new SaveFailureException("Couldn't register user: already exists",
                     (User)user);
+
+        List<Role> roles = userRepository.getRoles();
+        List<String> desiredRoles = user.getRoles().stream().map(role->role.getRoleName().toLowerCase()).toList();
+
+        user.setRoles(roles.stream().filter(role->desiredRoles.contains(role.getRoleName().toLowerCase())).toList());
 
         passwordEncoder.generateSalt();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
