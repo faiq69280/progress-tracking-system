@@ -28,7 +28,6 @@ import static org.junit.Assert.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@ComponentScan(basePackages = {"com.creativeuncommons.ProgressTrackingSystem"})
 public class UserRepositoryTests {
 
     public static final UUID TEST_UUID = UUID.randomUUID();
@@ -52,10 +51,12 @@ public class UserRepositoryTests {
 
     @Autowired LinkUserRolesQueryProvider linkUserRolesQueryProvider;
 
+    @Autowired RoleQueryProvider roleQueryProvider;
+
 
     @Before
     public void setup(){
-        userRepository = new UserRepository(queryProvider,queryExecutionManager,linkUserRolesQueryProvider);
+        userRepository = new UserRepository(queryProvider,queryExecutionManager,linkUserRolesQueryProvider,roleQueryProvider);
         DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
         definition.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);
         transactionStatus = platformTransactionManager.getTransaction(definition);
@@ -101,6 +102,8 @@ public class UserRepositoryTests {
         assertNotNull(foundByNameAndPassword);
         assertEquals(testUser.getUserName(),foundByNameAndPassword.getUserName());
         assertEquals(testUser.getPassword(),foundByNameAndPassword.getPassword());
+
+        assertNotNull(userRepository.getRoles());
 
     }
 
